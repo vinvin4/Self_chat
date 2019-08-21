@@ -6,7 +6,7 @@ Server::Server()
 }
 
 
-bool Server::WSA_start()
+bool Server::wsaStart()
 {
 	int result = WSAStartup(MAKEWORD(2, 2), &wsaData);//MAKEWORD(2,2) == 0000 0010 0000 0010
 
@@ -23,9 +23,9 @@ bool Server::WSA_start()
 	
 }
 
-bool Server::getAddrInfo()
+bool Server::getAddrinfo()
 {
-	if (this->WSA_start())
+	if (this->wsaStart())
 	{
 		memset(&hints, 0, sizeof(hints));
 
@@ -52,13 +52,13 @@ bool Server::getAddrInfo()
 	}	
 }
 
-bool Server::socket_creating()
+bool Server::socketCreating()
 {
-	if (this->getAddrInfo())
+	if (this->getAddrinfo())
 	{
-		listen_socket = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+		listenSocket = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
 
-		if (listen_socket == INVALID_SOCKET)
+		if (listenSocket == INVALID_SOCKET)
 		{
 			cerr << "Error at socket: " << WSAGetLastError() << std::endl;
 			freeaddrinfo(addr);
@@ -77,13 +77,13 @@ bool Server::socket_creating()
 
 bool Server::binding()
 {
-	if (this->socket_creating())
+	if (this->socketCreating())
 	{
-		if (bind(listen_socket, addr->ai_addr, (int)addr->ai_addrlen) == SOCKET_ERROR)
+		if (bind(listenSocket, addr->ai_addr, (int)addr->ai_addrlen) == SOCKET_ERROR)
 		{
 			cerr << "Bind failed with error: " << WSAGetLastError() << std::endl;
 			freeaddrinfo(addr);
-			closesocket(listen_socket);
+			closesocket(listenSocket);
 			WSACleanup();
 			return false;
 		}
@@ -98,20 +98,16 @@ bool Server::binding()
 }
 
 
-
-
-
-
 void Server::cleanServ()
 {
-	closesocket(listen_socket);
+	closesocket(listenSocket);
 	freeaddrinfo(addr);
 	WSACleanup();
 }
 
-int Server::getListen_socket()
+int Server::getListenSocket()
 {
-	return listen_socket;
+	return listenSocket;
 }
 
 bool Server::getCorrect()

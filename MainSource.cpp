@@ -1,6 +1,6 @@
 #include <iostream>
 #include <conio.h>
-#include <sstream> //Работа со строками через интерфейс потоков, std::ostringstream s;
+#include <sstream> 
 #include <string>
 
 #define _WIN32_WINNT 0x501
@@ -24,8 +24,9 @@ int main()
 	else
 	{
 		system("start http://127.0.0.1:8000/");
-		int listen_socket = serv->getListen_socket();
-		if (listen(listen_socket, SOMAXCONN) == SOCKET_ERROR)
+		int listenSocket = serv->getListenSocket();
+
+		if (listen(listenSocket, SOMAXCONN) == SOCKET_ERROR)
 		{
 			cerr << "Listen failed with error: " << WSAGetLastError() << std::endl;
 			serv->cleanServ();
@@ -36,7 +37,7 @@ int main()
 			cerr << "Listening correct" << std::endl;
 		}
 		/////
-		int client_socket = accept(listen_socket, NULL, NULL);
+		int client_socket = accept(listenSocket, NULL, NULL);
 		if (client_socket == INVALID_SOCKET)
 		{
 			cerr << "Accept failed: " << std::endl;
@@ -48,13 +49,11 @@ int main()
 			cerr << "Accept was good" << std::endl;
 		}
 		/////
-		const int max_client_buffer_size = 1024;
-		char buf[max_client_buffer_size];
+		const int maxClientBufferSize = 1024;
+		char buf[maxClientBufferSize];
 
-		int result = recv(client_socket, buf, max_client_buffer_size, 0);
-
-
-		
+		int result = recv(client_socket, buf, maxClientBufferSize, 0);
+			   		
 		if (result == SOCKET_ERROR)
 			{
 				cerr << "Recv failed: " << std::endl;
@@ -92,7 +91,7 @@ int main()
 						{
 							std::stringstream message;
 							cerr << "Press line: " << std::endl;
-							char sample_buf[max_client_buffer_size];
+							char sample_buf[maxClientBufferSize];
 							std::cin.getline(sample_buf, 1024);
 							message
 								<< "<pre>" << sample_buf << "</pre>" << std::endl;
